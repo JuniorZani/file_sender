@@ -59,7 +59,6 @@ void sendFile(FILE * file, char * fileName, size_t fileNameSize, int socketDescr
 
     // Enviando os dados do arquivo
     while ((bytesRead = fread(buffer, 1, sizeof(buffer), file)) > 0) {
-//        write(socketDescriptor, buffer, bytesRead);
         send(socketDescriptor, buffer, bytesRead, 0);
     }
 

@@ -4,7 +4,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include "../socket.h"
-
+#include <sys/time.h>
 
 #define PORT 6061
 #define BACKLOG 5
@@ -57,6 +57,7 @@ char * receiveFileName(int socketDescriptor, char * fileName, size_t fileNameSiz
 
 void receiveFile(int socketDescriptor, char * fileName){
     char buffer[1024];
+    struct timeval tv;
     ssize_t bytesRead;
     FILE  * file;
 
@@ -72,10 +73,16 @@ void receiveFile(int socketDescriptor, char * fileName){
         exit(EXIT_FAILURE);
     }
 
+    // pegar o horario de inicio
+    time_t initTime = tv.tv_usec;
     while ((bytesRead = recv(socketDescriptor, buffer, sizeof(buffer), 0)) > 0){
         fwrite(buffer, 1, bytesRead, file);
         printf("%s\n", buffer);
         printf("BYTES: %zd\n", bytesRead);
     }
+
+    // pegar o horario de fim
+    time_t finishTime = tv.tv_usec;
+    fprintf(stdout, "TEMPO PERCORRIDO: %ld.%.6ld\n",  (finishTime - initTime));
     fclose(file);
 }
