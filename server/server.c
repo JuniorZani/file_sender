@@ -8,7 +8,7 @@
 
 #define PORT 6061
 #define BACKLOG 5
-#define FILE_NAME "teste-recebido.txt"
+//#define FILE_NAME "teste-recebido.txt"
 
 char * receiveFileName(int socketDescriptor, char * fileName, size_t fileNameSize);
 void receiveFile(int socketDescriptor, char * fileName);
