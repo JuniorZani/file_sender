@@ -49,11 +49,11 @@ cmake_ninja_workdir = /home/emersonzani/Faculdade/file_sender/cmake-build-debug/
 
 build cmake_object_order_depends_target_file_sender: phony || CMakeFiles/file_sender.dir
 
-build CMakeFiles/file_sender.dir/serverDir/server.c.o: C_COMPILER__file_sender_Debug /home/emersonzani/Faculdade/file_sender/serverDir/server.c || cmake_object_order_depends_target_file_sender
-  DEP_FILE = CMakeFiles/file_sender.dir/serverDir/server.c.o.d
+build CMakeFiles/file_sender.dir/server/server.c.o: C_COMPILER__file_sender_Debug /home/emersonzani/Faculdade/file_sender/server/server.c || cmake_object_order_depends_target_file_sender
+  DEP_FILE = CMakeFiles/file_sender.dir/server/server.c.o.d
   FLAGS = -g -fdiagnostics-color=always -std=gnu11
   OBJECT_DIR = CMakeFiles/file_sender.dir
-  OBJECT_FILE_DIR = CMakeFiles/file_sender.dir/serverDir
+  OBJECT_FILE_DIR = CMakeFiles/file_sender.dir/server
 
 
 # =============================================================================
@@ -63,7 +63,7 @@ build CMakeFiles/file_sender.dir/serverDir/server.c.o: C_COMPILER__file_sender_D
 #############################################
 # Link the executable file_sender
 
-build file_sender: C_EXECUTABLE_LINKER__file_sender_Debug CMakeFiles/file_sender.dir/serverDir/server.c.o
+build file_sender: C_EXECUTABLE_LINKER__file_sender_Debug CMakeFiles/file_sender.dir/server/server.c.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/file_sender.dir
   POST_BUILD = :

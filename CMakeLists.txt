@@ -3,4 +3,4 @@ project(file_sender C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(file_sender serverDir/server.c)
+add_executable(file_sender server/server.c)

@@ -7,6 +7,7 @@
 
 #define PORT 6061
 #define SERVER_IP "192.168.195.189"
+#define FILE_NAME "teste.txt"
 
 void sendNumbers(int socketDescriptor);
 void sendFile(FILE * file, char * fileName, size_t fileNameSize, int socketDescriptor);
@@ -30,7 +31,7 @@ int main(){
         exit(EXIT_FAILURE);
     }
 
-    strcpy(fileName, "teste.txt");
+    strcpy(fileName, FILE_NAME);
     file = fopen(fileName, "r");
     if (file == NULL) {
         fprintf(stderr, "Erro ao abrir o arquivo\n");
