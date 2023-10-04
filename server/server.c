@@ -9,6 +9,8 @@
 #define PORT 6061
 #define BACKLOG 5
 //#define FILE_NAME "teste-recebido.txt"
+#define CHUNCK_SIZE (1024 * 1024 * 512)
+
 
 char * receiveFileName(int socketDescriptor, char * fileName, size_t fileNameSize);
 void receiveFile(int socketDescriptor, char * fileName);
@@ -57,7 +59,7 @@ char * receiveFileName(int socketDescriptor, char * fileName, size_t fileNameSiz
 }
 
 void receiveFile(int socketDescriptor, char * fileName){
-    char buffer[1024];
+    char * buffer = malloc(CHUNCK_SIZE);
     struct timeval tv;
     ssize_t bytesRead;
     FILE  * file;
@@ -80,10 +82,12 @@ void receiveFile(int socketDescriptor, char * fileName){
 
     // pegar o horario de inicio
     time_t initTime = tv.tv_usec;
-    while ((bytesRead = recv(socketDescriptor, buffer, sizeof(buffer), 0)) > 0){
+    while ((bytesRead = recv(socketDescriptor, buffer, CHUNCK_SIZE, 0)) > 0){
         fwrite(buffer, 1, bytesRead, file);
-        printf("%s\n", buffer);
+//        printf("%s\n", buffer);
         printf("BYTES: %zd\n", bytesRead);
+        printf("KILOBYTES: %zd\n", (bytesRead/1024));
+        printf("MEGABYTES: %zd\n\n", (bytesRead/(1024 * 1024)));
     }
 
     // pegar o horario de fim
