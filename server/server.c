@@ -9,8 +9,7 @@
 #define PORT 6061
 #define BACKLOG 5
 //#define FILE_NAME "teste-recebido.txt"
-//#define CHUNCK_SIZE (1024 * 1024 * 512)
-#define CHUNCK_SIZE (524288)
+#define CHUNCK_SIZE (1024 * 1024 * 256)
 
 
 char * receiveFileName(int socketDescriptor, char * fileName, size_t fileNameSize);
@@ -23,6 +22,7 @@ int main(){
     struct sockaddr_in clientAddr;                         // Variável que representa o endereço do socket do cliente
     socklen_t clientAddrLen = sizeof(clientAddr);
     FILE * file;
+    int chunckSize = CHUNCK_SIZE;
 
     // Criacao do socket do servidor
     serverSocketDescriptor = socket(AF_INET, SOCK_STREAM, 0);
@@ -30,6 +30,15 @@ int main(){
         fprintf(stderr,"Erro ao criar o socket do servidor\n");
         exit(EXIT_FAILURE);
     }
+
+//    if (setsockopt(serverSocketDescriptor, SOL_SOCKET, SO_RCVBUF, &chunckSize, chunckSize) < 0) {
+//        fprintf(stderr, "Erro ao configurar o tamanho do buffer de recepção");
+//        close(serverSocketDescriptor);
+//        return 1;
+//    }
+    int optval = 1;
+    setsockopt(serverSocketDescriptor, SOL_SOCKET, SO_REUSEADDR,(const void *) &optval, sizeof(int));
+
     // Configurando e realizando o bind do socket com o endereço escolhido
     serverSocketDescriptor = bindServerSocket(serverSocketDescriptor, &serverAddr, PORT);
 
@@ -62,6 +71,7 @@ char * receiveFileName(int socketDescriptor, char * fileName, size_t fileNameSiz
 void receiveFile(int socketDescriptor, char * fileName){
     char * buffer = malloc(CHUNCK_SIZE);
     struct timeval tv;
+    struct timeval init_time, finish_time;
     ssize_t bytesRead;
     FILE  * file;
 
@@ -82,7 +92,7 @@ void receiveFile(int socketDescriptor, char * fileName){
     }
 
     // pegar o horario de inicio
-    time_t initTime = tv.tv_usec;
+    gettimeofday(&init_time, NULL);
     while ((bytesRead = recv(socketDescriptor, buffer, CHUNCK_SIZE, 0)) > 0){
         fwrite(buffer, 1, bytesRead, file);
 //        printf("%s\n", buffer);
@@ -90,9 +100,17 @@ void receiveFile(int socketDescriptor, char * fileName){
         printf("KILOBYTES: %zd\n", (bytesRead/1024));
         printf("MEGABYTES: %zd\n\n", (bytesRead/(1024 * 1024)));
     }
+//    while ((bytesRead = read(socketDescriptor, buffer, CHUNCK_SIZE)) > 0){
+//        //fwrite(buffer, 1, bytesRead, file);
+////        printf("%s\n", buffer);
+//        printf("BYTES: %zd\n", bytesRead);
+//        printf("KILOBYTES: %zd\n", (bytesRead/1024));
+//        printf("MEGABYTES: %zd\n\n", (bytesRead/(1024 * 1024)));
+//    }
 
     // pegar o horario de fim
-    time_t finishTime = tv.tv_usec;
-    fprintf(stdout, "TEMPO PERCORRIDO: %ld.%.6ld\n",  (finishTime - initTime));
+    time_t finishTime = tv.tv_usec + tv.tv_sec;
+    gettimeofday(&finish_time, NULL);
+    fprintf(stdout, "TEMPO PERCORRIDO SEGUNDOS: %ld.%.6ld\n",  (finish_time.tv_sec - init_time.tv_sec));
     fclose(file);
 }
