@@ -7,16 +7,21 @@
 #include "../socket.h"
 
 #define PORT 6061
+//#define SERVER_IP "192.168.1.102"
 //#define SERVER_IP "192.168.1.103"
-#define SERVER_IP "127.0.0.1"
+#define SERVER_IP "192.168.195.203"
+//#define SERVER_IP "127.0.0.1"
+//#define FILE_NAME "NormalSizeFile.bin"
 #define FILE_NAME "BigFile.bin"
-#define CHUNCK_SIZE (1024 * 1024)
+//#define CHUNCK_SIZE (524288)
+#define CHUNCK_SIZE (1024 * 1024 * 256)
 
 void sendNumbers(int socketDescriptor);
 void sendFile(FILE * file, char * fileName, size_t fileNameSize, int socketDescriptor);
 
 int main(){
     int clientSocketDescriptor = socket(AF_INET, SOCK_STREAM, 0);
+    int chunckSize = CHUNCK_SIZE;
     char fileName[256];
     struct sockaddr_in serverAddr;
 
@@ -49,9 +54,10 @@ int main(){
     return 0;
 }
 
-void sendFile(FILE * file, char * fileName, size_t fileNameSize, int socketDescriptor){
-    int bytesRead;
-    char * buffer = malloc(CHUNCK_SIZE);
+void sendFile(FILE * file, char * fileName, size_t fileNameSize, int socketDescriptor) {
+    int i = 1;
+    size_t bytesRead;
+    char *buffer = malloc(CHUNCK_SIZE);
 
     printf("Estou enviando o arquivo!\n");
 
@@ -63,9 +69,18 @@ void sendFile(FILE * file, char * fileName, size_t fileNameSize, int socketDescr
 
     // Enviando os dados do arquivo
     while ((bytesRead = fread(buffer, 1, CHUNCK_SIZE, file)) > 0) {
+        fprintf(stdout, "Bloco %d:\n", i);
+        printf("BYTES: %zd\n", bytesRead);
+        printf("KILOBYTES: %zd\n", (bytesRead / 1024));
+        printf("MEGABYTES: %zd\n\n", (bytesRead / (1024 * 1024)));
         send(socketDescriptor, buffer, bytesRead, 0);
+        i++;
     }
-
+    if (bytesRead <= 0) {
+        fprintf(stdout, "ARQUIVO %s enviado\n", fileName);
+    } else {
+        fprintf(stdout, "ARQUIVO %s enviado com erro!\n", fileName);
+    }
 }
 
 void sendNumbers(int socketDescriptor) {

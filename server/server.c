@@ -9,7 +9,8 @@
 #define PORT 6061
 #define BACKLOG 5
 //#define FILE_NAME "teste-recebido.txt"
-#define CHUNCK_SIZE (1024 * 1024 * 512)
+//#define CHUNCK_SIZE (1024 * 1024 * 512)
+#define CHUNCK_SIZE (524288)
 
 
 char * receiveFileName(int socketDescriptor, char * fileName, size_t fileNameSize);
